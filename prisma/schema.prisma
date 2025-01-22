@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  User User[]
+}
+
+model User {
+  id                   Int             @id @default(autoincrement())
+  name                 String
+  username             String
+  password             String
+  roleId               Int
+  role                 Role            @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  createdAt            DateTime        @default(now())
+  PostLike             PostLikes[]
+  CommentLikes         CommentLikes[]
+  NotificationSent     Notifications[] @relation("sender")
+  NotificationReceived Notifications[] @relation("receipent")
+  Posts                Posts[]
+  Comments             Comments[]
+}
+
+model Tags {
+  id       Int        @id @default(autoincrement())
+  name     String
+  PostTags PostTags[]
+}
+
+model Posts {
+  id      Int    @id @default(autoincrement())
+  title   String
+  context String
+
+  userId   Int
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  PostLike PostLikes[]
+  Comments Comments[]
+  PostTags PostTags[]
+
+  createdAt DateTime @default(now())
+}
+
+model PostTags {
+  id     Int   @id @default(autoincrement())
+  tagId  Int
+  tag    Tags  @relation(fields: [tagId], references: [id])
+  postId Int
+  post   Posts @relation(fields: [postId], references: [id])
+}
+
+model PostLikes {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  user   User  @relation(fields: [userId], references: [id])
+  postId Int
+  post   Posts @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Comments {
+  id      Int    @id @default(autoincrement())
+  postId  Int
+  comment String
+  post    Posts  @relation(fields: [postId], references: [id])
+
+  userId       Int
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CommentLikes CommentLikes[]
+}
+
+model CommentLikes {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  commentId Int
+  comment   Comments @relation(fields: [commentId], references: [id])
+}
+
+model Notifications {
+  id          Int    @id @default(autoincrement())
+  message     String
+  link        String
+  senderId    Int?
+  sender      User?  @relation(fields: [senderId], references: [id], name: "sender")
+  receipentId Int?
+  receipent   User?  @relation(fields: [receipentId], references: [id], name: "receipent")
+}

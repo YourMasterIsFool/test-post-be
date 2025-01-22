@@ -1,0 +1,37 @@
+version: '3.8'
+services: 
+  postgress-test:
+    image: postgres:13.5
+    container_name: postgress-test
+    ports: 
+       - "5434:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRESS_DB: test
+    networks:
+        - my-networks
+
+  pgadmin-test:
+    image: dpage/pgadmin4
+    container_name: pgadmin-test
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@email.com
+      PGADMIN_DEFAULT_PASSWORD: rootpassword
+    ports: 
+      - '5055:80'
+    depends_on:
+      - postgress-test
+    networks: 
+      - my-networks
+
+    
+
+volumes:
+  postgres:
+
+networks:
+  my-networks:
+    driver: bridge
+      
+      
