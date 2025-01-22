@@ -23,6 +23,13 @@ export class AuthService {
       where: {
         username: schema.username,
       },
+      include: {
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     console.log(schema.username);
@@ -54,6 +61,7 @@ export class AuthService {
       id: checkUser.id,
       username: checkUser.username,
       name: checkUser.name,
+      role: checkUser.role.name,
     };
 
     return {

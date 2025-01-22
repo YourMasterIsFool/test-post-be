@@ -2,8 +2,9 @@
 
 ```bash
 $ docker compose up
-$ npx prisma migrate dev
 $ yarn install
+$ npx prisma migrate dev
 $ yarn run start:dev
+
 
 ```

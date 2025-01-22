@@ -42,6 +42,9 @@ export class PostsService {
       orderBy: {
         id: 'desc',
       },
+      where: {
+        deletedAt: null,
+      },
       include: {
         _count: {
           select: {
@@ -154,12 +157,26 @@ export class PostsService {
           },
         });
 
-        if (userId != isUser.userId) {
-          throw new customErrorExceptionResponse(
-            'Akses dilarang',
-            HttpStatus.FORBIDDEN,
-          );
-        }
+        const findUser = await tx.user.findFirst({
+          where: {
+            id: userId,
+          },
+          select: {
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+
+        console.log(findUser.role.name);
+        // if (findUser.role.name != 'admin' || isUser.userId != userId) {
+        //   throw new customErrorExceptionResponse(
+        //     'Akses dilarang',
+        //     HttpStatus.FORBIDDEN,
+        //   );
+        // }
         const findData = await tx.posts.findFirst({
           where: {
             id: id,
@@ -173,9 +190,12 @@ export class PostsService {
           );
         }
 
-        const removeData = await tx.posts.delete({
+        const removeData = await tx.posts.update({
           where: {
             id: id,
+          },
+          data: {
+            deletedAt: new Date(),
           },
         });
 
@@ -189,6 +209,7 @@ export class PostsService {
         throw e;
       }
 
+      console.log(e);
       throw new customErrorExceptionResponse(
         'Error internal server',
         HttpStatus.INTERNAL_SERVER_ERROR,

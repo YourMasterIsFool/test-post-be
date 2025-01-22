@@ -23,6 +23,7 @@ async function createMasterRole() {
     console.log(e);
   }
 }
+
 async function main() {
   await createMasterRole();
 }

@@ -46,13 +46,14 @@ model Posts {
   title   String
   context String
 
-  userId   Int
-  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  PostLike PostLikes[]
-  Comments Comments[]
-  PostTags PostTags[]
-
-  createdAt DateTime @default(now())
+  userId    Int
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  PostLike  PostLikes[]
+  Comments  Comments[]
+  PostTags  PostTags[]
+  deletedAt DateTime?
+  isApprove Boolean     @default(true)
+  createdAt DateTime    @default(now())
 }
 
 model PostTags {

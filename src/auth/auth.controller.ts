@@ -40,7 +40,6 @@ export class AuthController {
   ): Promise<ResponseSuccessDTO<UserDTO>> {
     const data = await this.authService.register(schema);
 
-    console.log('heh');
     return new ResponseSuccessDTO<UserDTO>({
       data: data,
       message: 'Successfully created data',
